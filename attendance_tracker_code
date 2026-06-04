@@ -1,0 +1,124 @@
+import pandas as pd
+import csv
+import os
+
+
+class AttendanceTracker:
+
+    def __init__(self):
+        self.filename = "attendance.csv"
+
+        # Create file if not exists
+        if not os.path.exists(self.filename):
+            with open(self.filename, "w", newline="") as file:
+                writer = csv.writer(file)
+                writer.writerow(["Roll No", "Student Name", "Attendance"])
+
+    # Add attendance
+    def mark_attendance(self):
+
+        roll_no = input("Enter Roll Number: ")
+        name = input("Enter Student Name: ")
+
+        status = input("Present or Absent (P/A): ").upper()
+
+        if status == "P":
+            attendance = "Present"
+        else:
+            attendance = "Absent"
+
+        with open(self.filename, "a", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow([roll_no, name, attendance])
+
+        print("\nAttendance Marked Successfully!\n")
+
+    # Display all records
+    def view_records(self):
+
+        df = pd.read_csv(self.filename)
+
+        print("\n========== ATTENDANCE TABLE ==========\n")
+        print(df)
+
+    # Search student
+    def search_student(self):
+
+        df = pd.read_csv(self.filename)
+
+        name = input("Enter Student Name to Search: ")
+
+        result = df[
+            df["Student Name"].str.lower() == name.lower()
+        ]
+
+        if not result.empty:
+            print("\nStudent Found:\n")
+            print(result)
+
+        else:
+            print("\nStudent Not Found!")
+
+    # Attendance statistics
+    def attendance_report(self):
+
+        df = pd.read_csv(self.filename)
+
+        total = len(df)
+
+        present = len(
+            df[df["Attendance"] == "Present"]
+        )
+
+        absent = len(
+            df[df["Attendance"] == "Absent"]
+        )
+
+        print("\n========== REPORT ==========")
+        print("Total Records :", total)
+        print("Present       :", present)
+        print("Absent        :", absent)
+
+        if total > 0:
+            print(
+                "Attendance Percentage :",
+                round((present / total) * 100, 2),
+                "%"
+            )
+
+
+# Main Program
+tracker = AttendanceTracker()
+
+while True:
+
+    print("\n===== STUDENT ATTENDANCE TRACKER =====")
+    print("1. Mark Attendance")
+    print("2. View Attendance Records")
+    print("3. Search Student")
+    print("4. Attendance Report")
+    print("5. Exit")
+    print("**Enter the attendance first**")
+    choice = input("\nEnter the choice : ")
+ 
+    
+
+    if choice == "1":
+        #print("Enter the attendance first:")
+        tracker.mark_attendance()
+
+    elif choice == "2":
+        tracker.view_records()
+
+    elif choice == "3":
+        tracker.search_student()
+
+    elif choice == "4":
+        tracker.attendance_report()
+
+    elif choice == "5":
+        print("\nThank You!")
+        break
+
+    else:
+        print("\nInvalid Choice!")
